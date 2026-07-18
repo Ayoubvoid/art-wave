@@ -36,3 +36,28 @@ export type Testimonial = {
   review: string;
   initials: string;
 };
+
+export type PaintingCategory =
+  | "Abstract"
+  | "Landscape"
+  | "Portrait"
+  | "Modern"
+  | "Nature"
+  | "Minimalist";
+
+export type PaintingAvailability = "available" | "sold" | "reserved";
+
+export type Painting = {
+  id: string;
+  slug: string;
+  title: string;
+  artist: string;
+  category: PaintingCategory;
+  price: number;
+  dimensions: string;
+  medium: string;
+  year: number;
+  availability: PaintingAvailability;
+  featured: boolean;
+  image: string;
+};
