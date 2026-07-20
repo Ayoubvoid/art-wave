@@ -1,7 +1,5 @@
 import type { Painting } from "@/types";
 
-import { PAINTINGS } from "@/lib/paintings-data";
-
 const GALLERY_DETAIL_IMAGES = [
   "https://images.unsplash.com/photo-1518998053901-0410a354d9ce?w=800&q=80&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1464146072230-91cabc968266?w=800&q=80&auto=format&fit=crop",
@@ -11,21 +9,12 @@ const GALLERY_DETAIL_IMAGES = [
   "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80&auto=format&fit=crop",
 ];
 
-export function getPaintingBySlug(slug: string): Painting | undefined {
-  return PAINTINGS.find((painting) => painting.slug === slug);
-}
-
-export function getRelatedPaintings(
-  painting: Painting,
-  limit = 4
-): Painting[] {
-  return PAINTINGS.filter(
-    (item) =>
-      item.category === painting.category && item.slug !== painting.slug
-  ).slice(0, limit);
-}
-
 export function getPaintingGalleryImages(painting: Painting): string[] {
+  if (painting.images.length > 0) {
+    const extras = painting.images.filter((url) => url !== painting.image);
+    return [painting.image, ...extras].slice(0, 6);
+  }
+
   const index = Number.parseInt(painting.id, 10) || 0;
   const extras = [
     GALLERY_DETAIL_IMAGES[index % GALLERY_DETAIL_IMAGES.length],
@@ -43,5 +32,8 @@ export function getPaintingDescription(
   painting: Painting,
   descriptions: Record<Painting["category"], string>
 ): string {
+  if (painting.description.trim()) {
+    return painting.description.trim();
+  }
   return descriptions[painting.category];
 }

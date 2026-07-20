@@ -11,7 +11,6 @@ import { useLanguage } from "@/components/providers/language-provider";
 import {
   getPaintingDescription,
   getPaintingGalleryImages,
-  getRelatedPaintings,
 } from "@/lib/painting-utils";
 import { formatPrice } from "@/lib/format-price";
 import type { Painting } from "@/types";
@@ -20,13 +19,16 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 type PaintingDetailViewProps = {
   painting: Painting;
+  relatedPaintings: Painting[];
 };
 
-export function PaintingDetailView({ painting }: PaintingDetailViewProps) {
+export function PaintingDetailView({
+  painting,
+  relatedPaintings,
+}: PaintingDetailViewProps) {
   const { t } = useLanguage();
   const images = getPaintingGalleryImages(painting);
   const description = getPaintingDescription(painting, t.painting.descriptions);
-  const relatedPaintings = getRelatedPaintings(painting);
 
   return (
     <>

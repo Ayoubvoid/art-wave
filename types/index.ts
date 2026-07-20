@@ -60,6 +60,9 @@ export type Painting = {
   availability: PaintingAvailability;
   featured: boolean;
   image: string;
+  description: string;
+  images: string[];
+  updatedAt: string;
 };
 
 export type OrderRequestFormValues = {

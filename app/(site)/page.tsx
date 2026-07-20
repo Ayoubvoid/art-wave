@@ -6,13 +6,18 @@ import { Hero } from "@/components/home/hero";
 import { Newsletter } from "@/components/home/newsletter";
 import { Testimonials } from "@/components/home/testimonials";
 import { WhyChoose } from "@/components/home/why-choose";
+import { getFeaturedPaintings } from "@/lib/paintings/service";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const featuredPaintings = await getFeaturedPaintings(8);
+
   return (
     <>
       <Hero />
       <FeaturedCollections />
-      <FeaturedArtworks />
+      <FeaturedArtworks paintings={featuredPaintings} />
       <AboutSection />
       <WhyChoose />
       <Testimonials />

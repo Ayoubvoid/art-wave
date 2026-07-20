@@ -3,18 +3,22 @@ import { notFound } from "next/navigation";
 
 import { PaintingDetailView } from "@/components/gallery/painting-detail-view";
 import { en } from "@/lib/i18n/locales/en";
-import { PAINTINGS } from "@/lib/paintings-data";
+import { getPaintingDescription } from "@/lib/painting-utils";
 import {
   getPaintingBySlug,
-  getPaintingDescription,
-} from "@/lib/painting-utils";
+  getRelatedPaintings,
+  listPaintings,
+} from "@/lib/paintings/service";
+
+export const dynamic = "force-dynamic";
 
 type PaintingPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  return PAINTINGS.map((painting) => ({
+  const paintings = await listPaintings();
+  return paintings.map((painting) => ({
     slug: painting.slug,
   }));
 }
@@ -23,7 +27,7 @@ export async function generateMetadata({
   params,
 }: PaintingPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const painting = getPaintingBySlug(slug);
+  const painting = await getPaintingBySlug(slug);
 
   if (!painting) {
     return {
@@ -46,11 +50,18 @@ export async function generateMetadata({
 
 export default async function PaintingPage({ params }: PaintingPageProps) {
   const { slug } = await params;
-  const painting = getPaintingBySlug(slug);
+  const painting = await getPaintingBySlug(slug);
 
   if (!painting) {
     notFound();
   }
 
-  return <PaintingDetailView painting={painting} />;
+  const relatedPaintings = await getRelatedPaintings(painting);
+
+  return (
+    <PaintingDetailView
+      painting={painting}
+      relatedPaintings={relatedPaintings}
+    />
+  );
 }

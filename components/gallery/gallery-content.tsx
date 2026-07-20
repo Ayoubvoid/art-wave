@@ -10,11 +10,14 @@ import { useLanguage } from "@/components/providers/language-provider";
 import {
   getCategoryFromSlug,
   PAINTING_CATEGORIES,
-  PAINTINGS,
-} from "@/lib/paintings-data";
-import type { PaintingCategory } from "@/types";
+} from "@/lib/paintings/categories";
+import type { Painting, PaintingCategory } from "@/types";
 
-export function GalleryContent() {
+type GalleryContentProps = {
+  paintings: Painting[];
+};
+
+export function GalleryContent({ paintings }: GalleryContentProps) {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("collection");
   const { t } = useLanguage();
@@ -29,11 +32,11 @@ export function GalleryContent() {
 
   const filteredPaintings = useMemo(() => {
     if (activeCategory === "All") {
-      return PAINTINGS;
+      return paintings;
     }
 
-    return PAINTINGS.filter((painting) => painting.category === activeCategory);
-  }, [activeCategory]);
+    return paintings.filter((painting) => painting.category === activeCategory);
+  }, [activeCategory, paintings]);
 
   return (
     <>
