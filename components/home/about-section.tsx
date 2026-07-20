@@ -10,7 +10,10 @@ export function AboutSection() {
   const { t } = useLanguage();
 
   return (
-    <section className="bg-[var(--aw-background)] px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
+    <section
+      id="about"
+      className="scroll-mt-24 bg-[var(--aw-background)] px-4 py-20 sm:px-6 sm:py-24 lg:px-8 lg:py-32"
+    >
       <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20 xl:gap-24">
         <FadeIn direction="up">
           <div className="relative aspect-[4/5] overflow-hidden bg-[var(--aw-secondary)] lg:aspect-[3/4]">

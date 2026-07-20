@@ -79,7 +79,7 @@ export function Hero() {
           <Button
             render={
               <Link
-                href="/artists"
+                href="/gallery"
                 className="inline-flex h-12 min-h-[44px] min-w-full items-center justify-center rounded-none border border-white/40 bg-transparent px-8 text-sm font-medium tracking-wide text-white transition-all hover:border-white hover:bg-white/10 sm:min-w-[180px]"
               />
             }

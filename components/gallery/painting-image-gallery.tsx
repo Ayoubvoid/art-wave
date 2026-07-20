@@ -50,7 +50,7 @@ export function PaintingImageGallery({
             </motion.div>
           </AnimatePresence>
 
-          <span className="absolute right-4 bottom-4 flex size-10 items-center justify-center border border-white/30 bg-[var(--aw-primary)]/70 text-white backdrop-blur-sm transition-opacity group-hover:opacity-100 lg:opacity-0">
+          <span className="absolute end-4 bottom-4 flex size-10 items-center justify-center border border-white/30 bg-[var(--aw-primary)]/70 text-white backdrop-blur-sm transition-opacity group-hover:opacity-100 lg:opacity-0">
             <ZoomIn className="size-4" aria-hidden />
           </span>
         </button>
@@ -104,7 +104,7 @@ export function PaintingImageGallery({
             <button
               type="button"
               onClick={() => setLightboxOpen(false)}
-              className="absolute top-6 right-6 flex size-11 items-center justify-center border border-white/30 text-white transition-colors hover:border-white"
+              className="absolute top-6 end-6 flex size-11 items-center justify-center border border-white/30 text-white transition-colors hover:border-white"
               aria-label="Close enlarged image"
             >
               <X className="size-5" />

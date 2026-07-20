@@ -8,16 +8,16 @@ export const SITE_DESCRIPTION =
 export const NAV_LINKS: { href: string; key: NavKey }[] = [
   { href: "/", key: "home" },
   { href: "/gallery", key: "gallery" },
-  { href: "/artists", key: "artists" },
-  { href: "/about", key: "about" },
-  { href: "/contact", key: "contact" },
+  { href: "/gallery", key: "artists" },
+  { href: "/#about", key: "about" },
+  { href: "/#contact", key: "contact" },
 ];
 
 export const FOOTER_QUICK_LINKS: { href: string; key: NavKey }[] = [
   { href: "/gallery", key: "gallery" },
-  { href: "/artists", key: "artists" },
-  { href: "/about", key: "about" },
-  { href: "/contact", key: "contact" },
+  { href: "/gallery", key: "artists" },
+  { href: "/#about", key: "about" },
+  { href: "/#contact", key: "contact" },
 ];
 
 export const SOCIAL_LINKS = [

@@ -38,7 +38,7 @@ export const PAINTINGS: Painting[] = [
     availability: "available",
     featured: true,
     image:
-      "https://images.unsplash.com/photo-1578301978693-85fa9c0320e9?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80&auto=format&fit=crop",
   },
   {
     id: "3",
@@ -113,7 +113,7 @@ export const PAINTINGS: Painting[] = [
     availability: "available",
     featured: false,
     image:
-      "https://images.unsplash.com/photo-1578321272170-b8145f775b6?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&auto=format&fit=crop",
   },
   {
     id: "8",
@@ -128,7 +128,7 @@ export const PAINTINGS: Painting[] = [
     availability: "available",
     featured: true,
     image:
-      "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80&auto=format&fit=crop",
   },
   {
     id: "9",

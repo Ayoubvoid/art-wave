@@ -30,7 +30,9 @@ function NavLink({
   onClick?: () => void;
 }) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive =
+    !href.includes("#") &&
+    (pathname === href || (href !== "/" && pathname.startsWith(`${href}/`)));
 
   return (
     <Link
@@ -57,9 +59,11 @@ function NavLink({
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
 
   const navLabel = (key: NavKey) => t.nav[key];
+  const sheetSide = dir === "rtl" ? "left" : "right";
+  const menuMotionX = dir === "rtl" ? -16 : 16;
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--aw-background)]/95 backdrop-blur-sm">
@@ -80,7 +84,7 @@ export function Header() {
           >
             {NAV_LINKS.map((link) => (
               <NavLink
-                key={link.href}
+                key={`${link.key}-${link.href}`}
                 href={link.href}
                 label={navLabel(link.key)}
               />
@@ -102,7 +106,7 @@ export function Header() {
             >
               <Menu className="size-5" />
             </SheetTrigger>
-            <SheetContent side="right" className="w-full max-w-sm px-6 sm:px-8">
+            <SheetContent side={sheetSide} className="w-full max-w-sm px-6 sm:px-8">
               <SheetHeader>
                 <SheetTitle className="font-heading text-start text-2xl">
                   {t.meta.siteName}
@@ -114,8 +118,8 @@ export function Header() {
               >
                 {NAV_LINKS.map((link, index) => (
                   <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: 16 }}
+                    key={`${link.key}-${link.href}`}
+                    initial={{ opacity: 0, x: menuMotionX }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05, duration: 0.3 }}
                   >

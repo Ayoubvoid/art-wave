@@ -30,7 +30,7 @@ export function Footer() {
   const navLabel = (key: NavKey) => t.nav[key];
 
   return (
-    <footer className="border-t border-[var(--border)] bg-[var(--aw-secondary)]">
+    <footer className="scroll-mt-24 border-t border-[var(--border)] bg-[var(--aw-secondary)]">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="grid gap-12 md:grid-cols-3 md:gap-10 lg:gap-14">
           <div className="max-w-sm">
@@ -51,7 +51,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-3 sm:space-y-4">
               {FOOTER_QUICK_LINKS.map((link) => (
-                <li key={link.href}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="inline-flex min-h-10 items-center text-sm tracking-wide text-[color-mix(in_srgb,var(--aw-primary)_65%,transparent)] transition-colors duration-300 hover:text-[var(--aw-primary)]"
@@ -63,7 +63,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div id="contact" className="scroll-mt-24">
             <h3 className="text-label mb-6 text-[var(--aw-primary)] sm:mb-8">
               {t.footer.contact}
             </h3>
