@@ -1,28 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { AvailabilityBadge } from "@/components/gallery/availability-badge";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format-price";
-import { cn } from "@/lib/utils";
 import type { Painting } from "@/types";
-
-const availabilityStyles = {
-  available: {
-    label: "Available",
-    className:
-      "border-[var(--aw-accent)]/30 bg-[var(--aw-accent)]/10 text-[var(--aw-primary)]",
-  },
-  sold: {
-    label: "Sold",
-    className:
-      "border-[var(--border)] bg-[var(--aw-secondary)] text-[color-mix(in_srgb,var(--aw-primary)_50%,transparent)]",
-  },
-  reserved: {
-    label: "Reserved",
-    className:
-      "border-[var(--aw-primary)]/20 bg-[var(--aw-primary)]/5 text-[var(--aw-primary)]",
-  },
-} as const;
 
 type PaintingCardProps = {
   painting: Painting;
@@ -30,8 +12,6 @@ type PaintingCardProps = {
 };
 
 export function PaintingCard({ painting, priority = false }: PaintingCardProps) {
-  const badge = availabilityStyles[painting.availability];
-
   return (
     <article className="group flex h-full flex-col">
       <div className="relative aspect-[3/4] overflow-hidden bg-[var(--aw-secondary)] transition-transform duration-500 ease-out group-hover:-translate-y-1">
@@ -45,14 +25,10 @@ export function PaintingCard({ painting, priority = false }: PaintingCardProps) 
         />
 
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
-          <span
-            className={cn(
-              "text-label border px-3 py-1.5 backdrop-blur-sm",
-              badge.className
-            )}
-          >
-            {badge.label}
-          </span>
+          <AvailabilityBadge
+            availability={painting.availability}
+            className="backdrop-blur-sm"
+          />
           {painting.featured && (
             <span className="text-label border border-white/30 bg-[var(--aw-primary)]/80 px-3 py-1.5 text-white backdrop-blur-sm">
               Featured
