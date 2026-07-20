@@ -1,44 +1,46 @@
 import type { OrderRequestFieldErrors, OrderRequestFormValues } from "@/types";
+import type { Translations } from "@/lib/i18n/types";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[+]?[\d\s()-]{7,20}$/;
 
 export function validateOrderRequest(
-  values: OrderRequestFormValues
+  values: OrderRequestFormValues,
+  messages: Translations["order"]["validation"]
 ): OrderRequestFieldErrors {
   const errors: OrderRequestFieldErrors = {};
 
   const fullName = values.fullName.trim();
   if (!fullName) {
-    errors.fullName = "Full name is required.";
+    errors.fullName = messages.fullNameRequired;
   } else if (fullName.length < 2) {
-    errors.fullName = "Please enter your full name.";
+    errors.fullName = messages.fullNameShort;
   }
 
   const phone = values.phone.trim();
   if (!phone) {
-    errors.phone = "Phone number is required.";
+    errors.phone = messages.phoneRequired;
   } else if (!PHONE_PATTERN.test(phone)) {
-    errors.phone = "Please enter a valid phone number.";
+    errors.phone = messages.phoneInvalid;
   }
 
   const email = values.email.trim();
   if (!email) {
-    errors.email = "Email address is required.";
+    errors.email = messages.emailRequired;
   } else if (!EMAIL_PATTERN.test(email)) {
-    errors.email = "Please enter a valid email address.";
+    errors.email = messages.emailInvalid;
   }
 
   const deliveryCity = values.deliveryCity.trim();
   if (!deliveryCity) {
-    errors.deliveryCity = "Delivery city is required.";
+    errors.deliveryCity = messages.cityRequired;
   }
 
   const deliveryAddress = values.deliveryAddress.trim();
   if (!deliveryAddress) {
-    errors.deliveryAddress = "Delivery address is required.";
+    errors.deliveryAddress = messages.addressRequired;
   } else if (deliveryAddress.length < 5) {
-    errors.deliveryAddress = "Please enter a complete delivery address.";
+    errors.deliveryAddress = messages.addressShort;
   }
 
   return errors;

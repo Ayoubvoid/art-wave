@@ -1,26 +1,32 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useTranslations } from "@/components/providers/language-provider";
 import type { PaintingAvailability } from "@/types";
 
-export const availabilityStyles = {
+const availabilityKeys: Record<
+  PaintingAvailability,
+  "available" | "sold" | "reserved"
+> = {
+  available: "available",
+  sold: "sold",
+  reserved: "reserved",
+};
+
+const availabilityStyles = {
   available: {
-    label: "Available",
     className:
       "border-[var(--aw-accent)]/30 bg-[var(--aw-accent)]/10 text-[var(--aw-primary)]",
   },
   sold: {
-    label: "Sold",
     className:
       "border-[var(--border)] bg-[var(--aw-secondary)] text-[color-mix(in_srgb,var(--aw-primary)_50%,transparent)]",
   },
   reserved: {
-    label: "Reserved",
     className:
       "border-[var(--aw-primary)]/20 bg-[var(--aw-primary)]/5 text-[var(--aw-primary)]",
   },
-} as const satisfies Record<
-  PaintingAvailability,
-  { label: string; className: string }
->;
+} as const;
 
 type AvailabilityBadgeProps = {
   availability: PaintingAvailability;
@@ -31,6 +37,8 @@ export function AvailabilityBadge({
   availability,
   className,
 }: AvailabilityBadgeProps) {
+  const t = useTranslations();
+  const key = availabilityKeys[availability];
   const badge = availabilityStyles[availability];
 
   return (
@@ -41,7 +49,7 @@ export function AvailabilityBadge({
         className
       )}
     >
-      {badge.label}
+      {t.availability[key]}
     </span>
   );
 }

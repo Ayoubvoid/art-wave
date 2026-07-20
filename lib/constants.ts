@@ -1,22 +1,24 @@
+import type { NavKey } from "@/lib/i18n/types";
+
 export const SITE_NAME = "Art Wave";
 
 export const SITE_DESCRIPTION =
   "Discover timeless paintings from talented artists around the world. A modern online gallery for premium art.";
 
-export const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Artists", href: "/artists" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-] as const;
+export const NAV_LINKS: { href: string; key: NavKey }[] = [
+  { href: "/", key: "home" },
+  { href: "/gallery", key: "gallery" },
+  { href: "/artists", key: "artists" },
+  { href: "/about", key: "about" },
+  { href: "/contact", key: "contact" },
+];
 
-export const FOOTER_QUICK_LINKS = [
-  { label: "Gallery", href: "/gallery" },
-  { label: "Artists", href: "/artists" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-] as const;
+export const FOOTER_QUICK_LINKS: { href: string; key: NavKey }[] = [
+  { href: "/gallery", key: "gallery" },
+  { href: "/artists", key: "artists" },
+  { href: "/about", key: "about" },
+  { href: "/contact", key: "contact" },
+];
 
 export const SOCIAL_LINKS = [
   { label: "Instagram", href: "#" },

@@ -11,6 +11,7 @@ import {
 } from "@/components/order/form-field";
 import { HowOrderingWorks } from "@/components/order/how-ordering-works";
 import { PaintingOrderSummary } from "@/components/order/painting-order-summary";
+import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { EMPTY_ORDER_FORM } from "@/lib/order-constants";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ type OrderRequestFormProps = {
 };
 
 export function OrderRequestForm({ painting }: OrderRequestFormProps) {
+  const { t } = useLanguage();
   const [values, setValues] = useState<OrderRequestFormValues>({
     ...EMPTY_ORDER_FORM,
   });
@@ -58,7 +60,7 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const validationErrors = validateOrderRequest(values);
+    const validationErrors = validateOrderRequest(values, t.order.validation);
     setErrors(validationErrors);
 
     if (hasOrderRequestErrors(validationErrors)) {
@@ -74,22 +76,21 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="py-6 text-center"
+        className="py-4 text-center sm:py-6"
       >
         <CheckCircle2
           className="mx-auto size-12 text-[var(--aw-accent)]"
           strokeWidth={1.5}
           aria-hidden
         />
-        <h3 className="font-heading mt-6 text-2xl text-[var(--aw-primary)]">
-          Thank you for your order request.
+        <h3 className="font-heading mt-6 text-xl text-[var(--aw-primary)] sm:text-2xl">
+          {t.order.form.successTitle}
         </h3>
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed md:text-base">
-          Our Art Wave team will contact you shortly to confirm your order and
-          delivery details.
+          {t.order.form.successP1}
         </p>
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[color-mix(in_srgb,var(--aw-primary)_70%,transparent)]">
-          Payment will be made upon delivery (Cash on Delivery).
+          {t.order.form.successP2}
         </p>
       </motion.div>
     );
@@ -99,10 +100,10 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
     <form onSubmit={handleSubmit} className="space-y-8" noValidate>
       <PaintingOrderSummary painting={painting} />
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
         <FormField
           id="fullName"
-          label="Full Name"
+          label={t.order.form.fullName}
           required
           error={errors.fullName}
           className="sm:col-span-2"
@@ -116,13 +117,12 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
             onChange={(event) => updateField("fullName", event.target.value)}
             className={cn(formInputClassName, errors.fullName && "border-[#b42318]")}
             aria-invalid={Boolean(errors.fullName)}
-            aria-describedby={errors.fullName ? "fullName-error" : undefined}
           />
         </FormField>
 
         <FormField
           id="phone"
-          label="Phone Number"
+          label={t.order.form.phone}
           required
           error={errors.phone}
         >
@@ -135,13 +135,12 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
             onChange={(event) => updateField("phone", event.target.value)}
             className={cn(formInputClassName, errors.phone && "border-[#b42318]")}
             aria-invalid={Boolean(errors.phone)}
-            aria-describedby={errors.phone ? "phone-error" : undefined}
           />
         </FormField>
 
         <FormField
           id="email"
-          label="Email Address"
+          label={t.order.form.email}
           required
           error={errors.email}
         >
@@ -154,13 +153,12 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
             onChange={(event) => updateField("email", event.target.value)}
             className={cn(formInputClassName, errors.email && "border-[#b42318]")}
             aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? "email-error" : undefined}
           />
         </FormField>
 
         <FormField
           id="deliveryCity"
-          label="Delivery City"
+          label={t.order.form.deliveryCity}
           required
           error={errors.deliveryCity}
         >
@@ -178,15 +176,12 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
               errors.deliveryCity && "border-[#b42318]"
             )}
             aria-invalid={Boolean(errors.deliveryCity)}
-            aria-describedby={
-              errors.deliveryCity ? "deliveryCity-error" : undefined
-            }
           />
         </FormField>
 
         <FormField
           id="deliveryAddress"
-          label="Delivery Address"
+          label={t.order.form.deliveryAddress}
           required
           error={errors.deliveryAddress}
           className="sm:col-span-2"
@@ -205,19 +200,20 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
               errors.deliveryAddress && "border-[#b42318]"
             )}
             aria-invalid={Boolean(errors.deliveryAddress)}
-            aria-describedby={
-              errors.deliveryAddress ? "deliveryAddress-error" : undefined
-            }
           />
         </FormField>
 
-        <FormField id="notes" label="Optional Notes" className="sm:col-span-2">
+        <FormField
+          id="notes"
+          label={t.order.form.notes}
+          className="sm:col-span-2"
+        >
           <textarea
             id="notes"
             name="notes"
             value={values.notes}
             onChange={(event) => updateNotes(event.target.value)}
-            placeholder="Delivery instructions or questions (optional)"
+            placeholder={t.order.form.notesPlaceholder}
             className={formTextareaClassName}
           />
         </FormField>
@@ -225,9 +221,9 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
 
       <Button
         type="submit"
-        className="h-14 w-full rounded-none bg-[var(--aw-primary)] text-sm font-medium tracking-widest uppercase text-white hover:bg-[color-mix(in_srgb,var(--aw-primary)_85%,var(--aw-accent))]"
+        className="h-14 min-h-[44px] w-full rounded-none bg-[var(--aw-primary)] text-sm font-medium tracking-widest uppercase text-white hover:bg-[color-mix(in_srgb,var(--aw-primary)_85%,var(--aw-accent))]"
       >
-        Submit Order Request
+        {t.order.form.submit}
       </Button>
 
       <HowOrderingWorks />

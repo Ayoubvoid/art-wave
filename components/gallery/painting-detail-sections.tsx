@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Globe,
   Package,
@@ -8,54 +10,39 @@ import {
 
 import { PaintingCard } from "@/components/gallery/painting-card";
 import { FadeIn } from "@/components/home/fade-in";
+import { useLanguage } from "@/components/providers/language-provider";
 import { getArtistProfile } from "@/lib/artists-data";
 import type { Painting } from "@/types";
+
+const shippingIcons = [Globe, Package, ShieldCheck, Truck];
 
 type PaintingDetailSectionsProps = {
   painting: Painting;
   relatedPaintings: Painting[];
 };
 
-const shippingItems = [
-  {
-    icon: Globe,
-    title: "Worldwide Shipping",
-    description: "Insured delivery to collectors internationally.",
-  },
-  {
-    icon: Package,
-    title: "Secure Packaging",
-    description: "Museum-grade crating and protective materials.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Certificate of Authenticity",
-    description: "Included with every original painting.",
-  },
-  {
-    icon: Truck,
-    title: "Estimated Delivery",
-    description: "Typically 2–4 weeks after purchase confirmation.",
-  },
-];
-
 export function PaintingDetailSections({
   painting,
   relatedPaintings,
 }: PaintingDetailSectionsProps) {
-  const artist = getArtistProfile(painting.artist);
+  const { t } = useLanguage();
+  const artist = getArtistProfile(painting.artist, t.artists);
 
   return (
     <div className="border-t border-[var(--border)] bg-[var(--aw-background)]">
-      <section className="px-6 py-20 lg:px-8 lg:py-28">
+      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-4xl">
           <FadeIn>
-            <p className="text-label mb-4 text-[var(--aw-accent)]">The Artist</p>
+            <p className="text-label mb-4 text-[var(--aw-accent)]">
+              {t.painting.artistSection}
+            </p>
             <h2 className="font-heading text-3xl text-[var(--aw-primary)] md:text-4xl">
-              About {artist.name}
+              {t.painting.aboutArtist} {artist.name}
             </h2>
-            <div className="mt-8 border border-[var(--border)] bg-[var(--aw-secondary)]/40 p-8 lg:p-10">
-              <p className="text-label text-[var(--aw-accent)]">{artist.location}</p>
+            <div className="mt-6 border border-[var(--border)] bg-[var(--aw-secondary)]/40 p-6 sm:mt-8 sm:p-8 lg:p-10">
+              <p className="text-label text-[var(--aw-accent)]">
+                {artist.location}
+              </p>
               <p className="mt-4 text-base leading-relaxed md:text-lg">
                 {artist.bio}
               </p>
@@ -64,20 +51,20 @@ export function PaintingDetailSections({
         </div>
       </section>
 
-      <section className="border-t border-[var(--border)] bg-[var(--aw-secondary)] px-6 py-20 lg:px-8 lg:py-28">
+      <section className="border-t border-[var(--border)] bg-[var(--aw-secondary)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-7xl">
           <FadeIn>
             <p className="text-label mb-4 text-center text-[var(--aw-accent)]">
-              Delivery
+              {t.painting.shipping.label}
             </p>
             <h2 className="font-heading text-center text-3xl text-[var(--aw-primary)] md:text-4xl">
-              Shipping Information
+              {t.painting.shipping.title}
             </h2>
           </FadeIn>
 
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {shippingItems.map((item, index) => {
-              const Icon = item.icon;
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
+            {t.painting.shipping.items.map((item, index) => {
+              const Icon = shippingIcons[index] ?? Globe;
 
               return (
                 <FadeIn key={item.title} delay={index * 0.08}>
@@ -88,7 +75,7 @@ export function PaintingDetailSections({
                         strokeWidth={1.5}
                       />
                     </div>
-                    <h3 className="font-heading mt-6 text-xl text-[var(--aw-primary)]">
+                    <h3 className="font-heading mt-5 text-lg text-[var(--aw-primary)] sm:mt-6 sm:text-xl">
                       {item.title}
                     </h3>
                     <p className="mt-3 text-sm leading-relaxed">
@@ -102,7 +89,7 @@ export function PaintingDetailSections({
         </div>
       </section>
 
-      <section className="border-t border-[var(--border)] px-6 py-20 lg:px-8 lg:py-28">
+      <section className="border-t border-[var(--border)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-3xl">
           <FadeIn>
             <div className="flex items-start gap-4">
@@ -112,13 +99,10 @@ export function PaintingDetailSections({
               />
               <div>
                 <h2 className="font-heading text-2xl text-[var(--aw-primary)] md:text-3xl">
-                  Returns
+                  {t.painting.returns.title}
                 </h2>
                 <p className="mt-4 text-base leading-relaxed">
-                  Original artworks are final sale. If your piece arrives
-                  damaged, contact us within 48 hours of delivery with photos.
-                  Our team will arrange inspection and repair or replacement in
-                  accordance with our collector guarantee.
+                  {t.painting.returns.body}
                 </p>
               </div>
             </div>
@@ -127,18 +111,18 @@ export function PaintingDetailSections({
       </section>
 
       {relatedPaintings.length > 0 && (
-        <section className="border-t border-[var(--border)] bg-[var(--aw-secondary)] px-6 py-20 lg:px-8 lg:py-28">
+        <section className="border-t border-[var(--border)] bg-[var(--aw-secondary)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
           <div className="mx-auto max-w-7xl">
             <FadeIn>
               <p className="text-label mb-4 text-[var(--aw-accent)]">
-                You May Also Like
+                {t.painting.related.label}
               </p>
               <h2 className="font-heading text-3xl text-[var(--aw-primary)] md:text-4xl">
-                Related Paintings
+                {t.painting.related.title}
               </h2>
             </FadeIn>
 
-            <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4 lg:gap-10">
               {relatedPaintings.map((related, index) => (
                 <FadeIn key={related.id} delay={index * 0.06}>
                   <PaintingCard painting={related} />

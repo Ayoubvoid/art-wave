@@ -11,21 +11,6 @@ const GALLERY_DETAIL_IMAGES = [
   "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80&auto=format&fit=crop",
 ];
 
-const DESCRIPTION_TEMPLATES: Record<Painting["category"], string> = {
-  Abstract:
-    "This original abstract painting captures emotion through bold composition and refined color harmony, making it an exceptional centerpiece for contemporary interiors.",
-  Landscape:
-    "This original landscape painting invites the viewer into a world of light and atmosphere, offering a serene focal point for refined living spaces.",
-  Portrait:
-    "This original portrait reveals depth and character through masterful technique, creating an intimate and compelling presence in any collection.",
-  Modern:
-    "This original modern painting balances structure and expression with contemporary sophistication, ideal for collectors who value bold yet refined art.",
-  Nature:
-    "This original nature-inspired work celebrates organic beauty and tactile richness, bringing calm and vitality to elegant interiors.",
-  Minimalist:
-    "This original minimalist painting distills form to its essential harmony, offering quiet luxury and contemplative beauty for discerning spaces.",
-};
-
 export function getPaintingBySlug(slug: string): Painting | undefined {
   return PAINTINGS.find((painting) => painting.slug === slug);
 }
@@ -54,6 +39,9 @@ export function getPaintingGalleryImages(painting: Painting): string[] {
   );
 }
 
-export function getPaintingDescription(painting: Painting): string {
-  return DESCRIPTION_TEMPLATES[painting.category];
+export function getPaintingDescription(
+  painting: Painting,
+  descriptions: Record<Painting["category"], string>
+): string {
+  return descriptions[painting.category];
 }

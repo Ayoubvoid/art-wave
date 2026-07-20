@@ -57,6 +57,13 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans scroll-smooth;
+    @apply scroll-smooth;
+  }
+  body.aw-rtl {
+    font-family: var(--font-arabic), var(--font-sans), ui-sans-serif, system-ui,
+      sans-serif;
+  }
+  [dir="rtl"] .flip-rtl {
+    transform: scaleX(-1);
   }
 }

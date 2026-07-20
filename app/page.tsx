@@ -1,4 +1,5 @@
 import { AboutSection } from "@/components/home/about-section";
+import { FaqSection } from "@/components/home/faq-section";
 import { FeaturedArtworks } from "@/components/home/featured-artworks";
 import { FeaturedCollections } from "@/components/home/featured-collections";
 import { Hero } from "@/components/home/hero";
@@ -15,6 +16,7 @@ export default function HomePage() {
       <AboutSection />
       <WhyChoose />
       <Testimonials />
+      <FaqSection />
       <Newsletter />
     </>
   );

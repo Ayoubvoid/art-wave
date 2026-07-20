@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PaintingDetailView } from "@/components/gallery/painting-detail-view";
+import { en } from "@/lib/i18n/locales/en";
 import { PAINTINGS } from "@/lib/paintings-data";
 import {
   getPaintingBySlug,
@@ -30,7 +31,7 @@ export async function generateMetadata({
     };
   }
 
-  const description = `${painting.title} by ${painting.artist} — an original ${painting.category.toLowerCase()} painting available through Art Wave. ${getPaintingDescription(painting)}`;
+  const description = `${painting.title} by ${painting.artist} — an original ${painting.category.toLowerCase()} painting available through Art Wave. ${getPaintingDescription(painting, en.painting.descriptions)}`;
 
   return {
     title: `${painting.title} | Art Wave`,
