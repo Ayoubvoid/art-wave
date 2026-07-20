@@ -61,3 +61,18 @@ export type Painting = {
   featured: boolean;
   image: string;
 };
+
+export type OrderRequestFormValues = {
+  fullName: string;
+  phone: string;
+  email: string;
+  deliveryCity: string;
+  deliveryAddress: string;
+  notes: string;
+};
+
+export type OrderRequestField = keyof OrderRequestFormValues;
+
+export type OrderRequestFieldErrors = Partial<
+  Record<Exclude<OrderRequestField, "notes">, string>
+>;
