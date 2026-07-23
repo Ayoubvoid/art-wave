@@ -6,6 +6,11 @@ export async function POST(request: Request) {
   const response = NextResponse.redirect(
     new URL("/admin/login", request.url)
   );
-  response.cookies.delete(ADMIN_SESSION_COOKIE);
+  response.cookies.set(ADMIN_SESSION_COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
   return response;
 }

@@ -6,16 +6,19 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useLanguage } from "@/components/providers/language-provider";
-import { Button } from "@/components/ui/button";
 import { HERO_IMAGE } from "@/lib/home-data";
+import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+
+const ctaBase =
+  "inline-flex h-12 min-h-[44px] min-w-full items-center justify-center gap-2 px-8 text-sm font-medium tracking-wide transition-all duration-300 ease-out sm:min-w-[180px]";
 
 export function Hero() {
   const { t } = useLanguage();
 
   return (
-    <section className="relative flex min-h-[calc(100svh-4rem)] items-center justify-center overflow-hidden sm:min-h-[calc(100svh-5rem)]">
+    <section className="relative -mt-16 flex min-h-[100svh] items-center justify-center overflow-hidden pt-16 sm:-mt-20 sm:pt-20">
       <Image
         src={HERO_IMAGE}
         alt={t.home.hero.title}
@@ -64,28 +67,26 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.35, ease }}
           className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:mt-12 sm:flex-row sm:items-center sm:gap-4"
         >
-          <Button
-            render={
-              <Link
-                href="/gallery"
-                className="group inline-flex h-12 min-h-[44px] min-w-full items-center justify-center gap-2 rounded-none bg-white px-8 text-sm font-medium tracking-wide text-[var(--aw-primary)] transition-all hover:bg-[var(--aw-secondary)] sm:min-w-[180px]"
-              />
-            }
+          <Link
+            href="/gallery"
+            className={cn(
+              ctaBase,
+              "group bg-[var(--aw-accent)] text-[var(--aw-primary)] shadow-[0_8px_30px_rgba(200,169,106,0.35)] hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--aw-accent)_92%,white)] hover:shadow-[0_12px_36px_rgba(200,169,106,0.45)]"
+            )}
           >
             {t.home.hero.ctaGallery}
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-1 flip-rtl" />
-          </Button>
+          </Link>
 
-          <Button
-            render={
-              <Link
-                href="/gallery"
-                className="inline-flex h-12 min-h-[44px] min-w-full items-center justify-center rounded-none border border-white/40 bg-transparent px-8 text-sm font-medium tracking-wide text-white transition-all hover:border-white hover:bg-white/10 sm:min-w-[180px]"
-              />
-            }
+          <Link
+            href="/gallery"
+            className={cn(
+              ctaBase,
+              "border border-white/45 bg-white/5 text-white backdrop-blur-sm hover:border-white/70 hover:bg-white/15"
+            )}
           >
             {t.home.hero.ctaArtists}
-          </Button>
+          </Link>
         </motion.div>
       </div>
 

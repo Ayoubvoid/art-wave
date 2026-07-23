@@ -29,10 +29,6 @@ const mainNav = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/admin/login")) {
-    return <>{children}</>;
-  }
-
   return (
     <div className="min-h-screen bg-[#f6f5f3] text-zinc-900 lg:flex">
       <aside className="border-b border-zinc-800/10 bg-[#141414] text-zinc-100 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:flex-col lg:border-b-0 lg:border-r">

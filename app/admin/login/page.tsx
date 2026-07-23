@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { ADMIN_PASSWORD } from "@/lib/admin/constants";
-import { Button } from "@/components/ui/button";
 
 type AdminLoginPageProps = {
   searchParams: Promise<{ error?: string }>;
@@ -42,9 +41,12 @@ export default async function AdminLoginPage({
               className="mt-2 w-full border border-zinc-300 px-3 py-2.5 text-sm outline-none ring-zinc-900 focus:ring-2"
             />
           </div>
-          <Button type="submit" className="h-11 w-full rounded-none">
+          <button
+            type="submit"
+            className="h-11 w-full bg-zinc-900 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+          >
             Enter admin
-          </Button>
+          </button>
         </form>
 
         <p className="mt-6 text-xs text-zinc-500">
