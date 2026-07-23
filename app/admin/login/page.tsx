@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { ADMIN_PASSWORD } from "@/lib/admin/constants";
-
 type AdminLoginPageProps = {
   searchParams: Promise<{ error?: string }>;
 };
@@ -49,11 +47,7 @@ export default async function AdminLoginPage({
           </button>
         </form>
 
-        <p className="mt-6 text-xs text-zinc-500">
-          Development password:{" "}
-          <code className="rounded bg-zinc-100 px-1.5 py-0.5">{ADMIN_PASSWORD}</code>
-        </p>
-        <p className="mt-4 text-center text-xs">
+        <p className="mt-6 text-center text-xs">
           <Link href="/" className="text-zinc-600 underline-offset-4 hover:underline">
             Back to website
           </Link>

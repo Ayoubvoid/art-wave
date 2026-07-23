@@ -16,7 +16,13 @@ import {
   setPaintingFeatured,
   updatePainting,
 } from "@/lib/paintings/service";
+import { ORDER_STATUSES } from "@/lib/orders/constants";
+import {
+  deleteOrder,
+  updateOrderStatus,
+} from "@/lib/orders/service";
 import type { PaintingInput } from "@/lib/paintings/repository";
+import type { OrderStatus } from "@/types";
 
 async function requireAdmin() {
   if (!(await isAdminAuthenticated())) {
@@ -176,4 +182,21 @@ export async function uploadPaintingImagesAction(formData: FormData) {
   }
 
   return { urls };
+}
+
+export async function updateOrderStatusAction(id: string, status: string) {
+  await requireAdmin();
+  if (!ORDER_STATUSES.includes(status as OrderStatus)) {
+    throw new Error("Invalid status");
+  }
+  await updateOrderStatus(id, status as OrderStatus);
+  revalidatePath("/admin");
+  revalidatePath("/admin/orders");
+}
+
+export async function deleteOrderAction(id: string) {
+  await requireAdmin();
+  await deleteOrder(id);
+  revalidatePath("/admin");
+  revalidatePath("/admin/orders");
 }

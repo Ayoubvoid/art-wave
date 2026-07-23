@@ -82,3 +82,26 @@ export type OrderRequestField = keyof OrderRequestFormValues;
 export type OrderRequestFieldErrors = Partial<
   Record<Exclude<OrderRequestField, "notes">, string>
 >;
+
+export type OrderStatus =
+  | "new"
+  | "contacted"
+  | "preparing"
+  | "delivered"
+  | "cancelled";
+
+export type Order = {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  deliveryCity: string;
+  deliveryAddress: string;
+  notes: string;
+  paintingId: string;
+  paintingTitle: string;
+  price: number;
+  currency: string;
+  status: OrderStatus;
+  createdAt: string;
+};

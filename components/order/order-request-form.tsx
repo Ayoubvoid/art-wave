@@ -37,6 +37,7 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
   });
   const [errors, setErrors] = useState<OrderRequestFieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function updateField(
     field: Exclude<OrderRequestField, "notes">,
@@ -57,7 +58,7 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
     setValues((current) => ({ ...current, notes: value }));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const validationErrors = validateOrderRequest(values, t.order.validation);
@@ -67,7 +68,25 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
       return;
     }
 
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/order-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...values,
+          paintingId: painting.id,
+        }),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -221,6 +240,7 @@ export function OrderRequestForm({ painting }: OrderRequestFormProps) {
 
       <Button
         type="submit"
+        disabled={submitting}
         className="h-14 min-h-[44px] w-full rounded-none bg-[var(--aw-primary)] text-sm font-medium tracking-widest uppercase text-white hover:bg-[color-mix(in_srgb,var(--aw-primary)_85%,var(--aw-accent))]"
       >
         {t.order.form.submit}

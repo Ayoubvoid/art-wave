@@ -21,7 +21,6 @@ const mainNav = [
     href: "/admin/orders",
     label: "Orders",
     icon: ShoppingBag,
-    badge: "Coming Soon",
   },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
@@ -63,11 +62,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               >
                 <Icon className="size-4 shrink-0" aria-hidden />
                 <span className="whitespace-nowrap">{item.label}</span>
-                {item.badge ? (
-                  <span className="ms-auto hidden rounded bg-white/10 px-2 py-0.5 text-[10px] tracking-wide text-zinc-300 uppercase lg:inline">
-                    {item.badge}
-                  </span>
-                ) : null}
               </Link>
             );
           })}

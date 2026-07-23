@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format-price";
+import { getOrderStats } from "@/lib/orders/service";
 import {
   getPaintingStats,
   getRecentPaintings,
@@ -11,14 +12,22 @@ import {
 
 export default async function AdminDashboardPage() {
   const stats = await getPaintingStats();
+  const orderStats = await getOrderStats();
   const recent = await getRecentPaintings(5);
 
-  const cards = [
+  const paintingCards = [
     { label: "Total Paintings", value: stats.total },
     { label: "Available", value: stats.available },
     { label: "Reserved", value: stats.reserved },
     { label: "Sold", value: stats.sold },
     { label: "Featured", value: stats.featured },
+  ];
+
+  const orderCards = [
+    { label: "Total Orders", value: orderStats.total },
+    { label: "New Orders", value: orderStats.new },
+    { label: "Delivered Orders", value: orderStats.delivered },
+    { label: "Cancelled Orders", value: orderStats.cancelled },
   ];
 
   return (
@@ -44,7 +53,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        {cards.map((card) => (
+        {paintingCards.map((card) => (
           <div
             key={card.label}
             className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm"
@@ -55,6 +64,33 @@ export default async function AdminDashboardPage() {
             <p className="font-heading mt-2 text-4xl text-zinc-900">{card.value}</p>
           </div>
         ))}
+      </div>
+
+      <div>
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="font-heading text-2xl text-zinc-900">Orders overview</h2>
+          <Link
+            href="/admin/orders"
+            className="text-sm text-zinc-600 underline-offset-4 hover:underline"
+          >
+            Manage orders
+          </Link>
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {orderCards.map((card) => (
+            <div
+              key={card.label}
+              className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm"
+            >
+              <p className="text-xs tracking-wide text-zinc-500 uppercase">
+                {card.label}
+              </p>
+              <p className="font-heading mt-2 text-4xl text-zinc-900">
+                {card.value}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -101,6 +137,7 @@ export default async function AdminDashboardPage() {
         <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
           <h2 className="font-heading text-2xl text-zinc-900">Quick actions</h2>
           <div className="mt-6 flex flex-col gap-3">
+            <QuickLink href="/admin/orders" label="View order requests" />
             <QuickLink href="/admin/paintings/new" label="Add a new painting" />
             <QuickLink href="/admin/paintings" label="Manage inventory" />
             <QuickLink href="/admin/categories" label="Browse categories" />
