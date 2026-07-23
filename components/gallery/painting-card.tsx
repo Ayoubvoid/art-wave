@@ -56,7 +56,7 @@ export function PaintingCard({ painting, priority = false }: PaintingCardProps) 
           {painting.dimensions} · {painting.medium}
         </p>
         <p className="mt-4 text-base font-medium tracking-wide text-[var(--aw-accent)]">
-          {formatPrice(painting.price)}
+          {formatPrice(painting.price, painting.currency)}
         </p>
 
         <Button

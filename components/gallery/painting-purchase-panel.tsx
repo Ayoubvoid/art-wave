@@ -24,7 +24,7 @@ export function PaintingPurchasePanel({ painting }: PaintingPurchasePanelProps) 
         <p className="text-label text-[var(--aw-accent)]">{t.painting.acquire}</p>
 
         <p className="mt-4 font-heading text-3xl text-[var(--aw-primary)] lg:text-4xl">
-          {formatPrice(painting.price)}
+          {formatPrice(painting.price, painting.currency)}
         </p>
 
         <div className="mt-4">

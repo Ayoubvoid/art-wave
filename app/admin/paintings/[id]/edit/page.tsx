@@ -33,7 +33,7 @@ export default async function EditPaintingPage({
         </p>
       )}
 
-      <div className="mt-8 border border-zinc-200 bg-white p-6 sm:p-8">
+      <div className="rounded-lg border border-zinc-200 bg-white p-6 sm:p-8">
         <PaintingForm painting={painting} uploadId={painting.id} />
       </div>
 

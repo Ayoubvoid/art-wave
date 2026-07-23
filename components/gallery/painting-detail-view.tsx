@@ -75,7 +75,7 @@ export function PaintingDetailView({
 
               <div className="mt-5 flex flex-wrap items-center gap-3 sm:mt-6 sm:gap-4">
                 <p className="text-lg font-medium tracking-wide text-[var(--aw-accent)] sm:text-xl">
-                  {formatPrice(painting.price)}
+                  {formatPrice(painting.price, painting.currency)}
                 </p>
                 <AvailabilityBadge availability={painting.availability} />
               </div>

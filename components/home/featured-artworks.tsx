@@ -50,7 +50,7 @@ export function FeaturedArtworks({ paintings }: FeaturedArtworksProps) {
                     {painting.artist}
                   </p>
                   <p className="pt-1 text-sm font-medium tracking-wide text-[var(--aw-accent)]">
-                    {formatPrice(painting.price)}
+                    {formatPrice(painting.price, painting.currency)}
                   </p>
                 </div>
 

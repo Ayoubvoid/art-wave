@@ -11,7 +11,7 @@ export default function NewPaintingPage() {
         New entries appear on the public gallery as soon as you save.
       </p>
 
-      <div className="mt-8 border border-zinc-200 bg-white p-6 sm:p-8">
+      <div className="rounded-lg border border-zinc-200 bg-white p-6 sm:p-8">
         <PaintingForm uploadId="draft" />
       </div>
 

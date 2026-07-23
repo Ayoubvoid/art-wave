@@ -35,13 +35,19 @@ export async function generateMetadata({
     };
   }
 
-  const description = `${painting.title} by ${painting.artist} — an original ${painting.category.toLowerCase()} painting available through Art Wave. ${getPaintingDescription(painting, en.painting.descriptions)}`;
+  const fallbackDescription = `${painting.title} by ${painting.artist} — an original ${painting.category.toLowerCase()} painting available through Art Wave. ${getPaintingDescription(painting, en.painting.descriptions)}`;
+
+  const title =
+    painting.metaTitle.trim() ||
+    `${painting.title} | Art Wave`;
+  const description =
+    painting.metaDescription.trim() || fallbackDescription;
 
   return {
-    title: `${painting.title} | Art Wave`,
+    title,
     description,
     openGraph: {
-      title: `${painting.title} | Art Wave`,
+      title,
       description,
       images: [{ url: painting.image }],
     },

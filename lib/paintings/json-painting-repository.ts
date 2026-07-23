@@ -18,6 +18,9 @@ function normalizePainting(raw: Painting): Painting {
     ...raw,
     description: raw.description ?? "",
     images: raw.images ?? [],
+    currency: raw.currency ?? "USD",
+    metaTitle: raw.metaTitle ?? "",
+    metaDescription: raw.metaDescription ?? "",
     updatedAt: raw.updatedAt ?? nowIso(),
   };
 }
@@ -82,6 +85,7 @@ export class JsonPaintingRepository implements PaintingRepository {
       artist: input.artist.trim(),
       category: input.category,
       price: input.price,
+      currency: input.currency.trim() || "USD",
       dimensions: input.dimensions.trim(),
       medium: input.medium.trim(),
       year: input.year,
@@ -90,6 +94,8 @@ export class JsonPaintingRepository implements PaintingRepository {
       featured: input.featured,
       image: input.image,
       images: input.images.filter(Boolean),
+      metaTitle: input.metaTitle.trim(),
+      metaDescription: input.metaDescription.trim(),
       updatedAt: nowIso(),
     };
 
@@ -120,6 +126,7 @@ export class JsonPaintingRepository implements PaintingRepository {
       artist: input.artist.trim(),
       category: input.category,
       price: input.price,
+      currency: input.currency.trim() || "USD",
       dimensions: input.dimensions.trim(),
       medium: input.medium.trim(),
       year: input.year,
@@ -128,6 +135,8 @@ export class JsonPaintingRepository implements PaintingRepository {
       featured: input.featured,
       image: input.image,
       images: input.images.filter(Boolean),
+      metaTitle: input.metaTitle.trim(),
+      metaDescription: input.metaDescription.trim(),
       updatedAt: nowIso(),
     };
 

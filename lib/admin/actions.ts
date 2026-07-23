@@ -5,13 +5,15 @@ import { redirect } from "next/navigation";
 import { promises as fs } from "fs";
 import path from "path";
 
-import { isAdminAuthenticated, loginAdmin, logoutAdmin } from "@/lib/admin/auth";
+import { isAdminAuthenticated } from "@/lib/admin/auth";
 import type { PaintingAvailability, PaintingCategory } from "@/types";
 import {
   createPainting,
   deletePainting,
+  duplicatePainting,
+  getPaintingById,
   setPaintingAvailability,
-  togglePaintingFeatured,
+  setPaintingFeatured,
   updatePainting,
 } from "@/lib/paintings/service";
 import type { PaintingInput } from "@/lib/paintings/repository";
@@ -25,39 +27,36 @@ async function requireAdmin() {
 function revalidatePublicPaintingPaths(slug?: string) {
   revalidatePath("/");
   revalidatePath("/gallery");
+  revalidatePath("/admin");
+  revalidatePath("/admin/paintings");
   if (slug) {
     revalidatePath(`/gallery/${slug}`);
   }
 }
 
-export async function adminLoginAction(formData: FormData) {
-  const password = String(formData.get("password") ?? "");
-  const ok = await loginAdmin(password);
-
-  if (!ok) {
-    redirect("/admin/login?error=1");
+function parsePaintingForm(formData: FormData): PaintingInput {
+  const imagesRaw = String(formData.get("images") ?? "[]");
+  let images: string[] = [];
+  try {
+    const parsed = JSON.parse(imagesRaw) as unknown;
+    if (Array.isArray(parsed)) {
+      images = parsed.filter((item): item is string => typeof item === "string");
+    }
+  } catch {
+    images = imagesRaw
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
   }
 
-  redirect("/admin");
-}
-
-export async function adminLogoutAction() {
-  await logoutAdmin();
-  redirect("/admin/login");
-}
-
-function parsePaintingForm(formData: FormData): PaintingInput {
-  const imagesRaw = String(formData.get("images") ?? "");
-  const images = imagesRaw
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+  const featuredValue = String(formData.get("featured") ?? "no");
 
   return {
     title: String(formData.get("title") ?? ""),
     artist: String(formData.get("artist") ?? ""),
     category: String(formData.get("category") ?? "Abstract") as PaintingCategory,
     price: Number(formData.get("price") ?? 0),
+    currency: String(formData.get("currency") ?? "USD"),
     dimensions: String(formData.get("dimensions") ?? ""),
     medium: String(formData.get("medium") ?? ""),
     year: Number(formData.get("year") ?? new Date().getFullYear()),
@@ -65,9 +64,11 @@ function parsePaintingForm(formData: FormData): PaintingInput {
     availability: String(
       formData.get("availability") ?? "available"
     ) as PaintingAvailability,
-    featured: formData.get("featured") === "on",
+    featured: featuredValue === "yes",
     image: String(formData.get("image") ?? ""),
     images,
+    metaTitle: String(formData.get("metaTitle") ?? ""),
+    metaDescription: String(formData.get("metaDescription") ?? ""),
     slug: String(formData.get("slug") ?? "").trim() || undefined,
   };
 }
@@ -101,13 +102,30 @@ export async function deletePaintingAction(id: string) {
   await requireAdmin();
   const removed = await deletePainting(id);
   revalidatePublicPaintingPaths(removed?.slug);
-  revalidatePath("/admin/paintings");
   redirect("/admin/paintings");
+}
+
+export async function duplicatePaintingAction(id: string) {
+  await requireAdmin();
+  const created = await duplicatePainting(id);
+  revalidatePublicPaintingPaths(created.slug);
+  redirect(`/admin/paintings/${created.id}/edit?saved=1`);
 }
 
 export async function toggleFeaturedAction(id: string) {
   await requireAdmin();
-  const updated = await togglePaintingFeatured(id);
+  const painting = await getPaintingById(id);
+  if (!painting) {
+    return;
+  }
+  const updated = await setPaintingFeatured(id, !painting.featured);
+  revalidatePublicPaintingPaths(updated.slug);
+  revalidatePath("/admin/paintings");
+}
+
+export async function setFeaturedAction(id: string, featured: boolean) {
+  await requireAdmin();
+  const updated = await setPaintingFeatured(id, featured);
   revalidatePublicPaintingPaths(updated.slug);
   revalidatePath("/admin/paintings");
 }
@@ -126,7 +144,9 @@ export async function uploadPaintingImagesAction(formData: FormData) {
   await requireAdmin();
 
   const paintingId = String(formData.get("paintingId") ?? "draft");
-  const files = formData.getAll("files").filter((item): item is File => item instanceof File);
+  const files = formData
+    .getAll("files")
+    .filter((item): item is File => item instanceof File);
 
   if (files.length === 0) {
     return { error: "No files selected", urls: [] as string[] };

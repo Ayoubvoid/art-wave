@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { adminLoginAction } from "@/lib/admin/actions";
 import { ADMIN_PASSWORD } from "@/lib/admin/constants";
 import { Button } from "@/components/ui/button";
 
@@ -21,7 +20,7 @@ export default async function AdminLoginPage({
           Private area for Art Wave administrators.
         </p>
 
-        <form action={adminLoginAction} className="mt-8 space-y-4">
+        <form method="POST" action="/api/admin/login" className="mt-8 space-y-4">
           {error ? (
             <p className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
               Invalid password. Try again.

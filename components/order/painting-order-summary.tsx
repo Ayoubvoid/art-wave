@@ -34,7 +34,7 @@ export function PaintingOrderSummary({ painting }: PaintingOrderSummaryProps) {
             {t.order.summary.price}
           </dt>
           <dd className="text-end font-medium text-[var(--aw-accent)]">
-            {formatPrice(painting.price)}
+            {formatPrice(painting.price, painting.currency)}
           </dd>
         </div>
         <div className="flex justify-between gap-4">

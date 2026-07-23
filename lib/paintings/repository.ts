@@ -5,6 +5,7 @@ export type PaintingInput = {
   artist: string;
   category: PaintingCategory;
   price: number;
+  currency: string;
   dimensions: string;
   medium: string;
   year: number;
@@ -13,6 +14,8 @@ export type PaintingInput = {
   featured: boolean;
   image: string;
   images: string[];
+  metaTitle: string;
+  metaDescription: string;
   slug?: string;
 };
 

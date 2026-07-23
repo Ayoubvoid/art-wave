@@ -1,23 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
 
 import { savePaintingAction, uploadPaintingImagesAction } from "@/lib/admin/actions";
+import { STORE_CURRENCIES } from "@/lib/admin/store-currencies";
 import { PAINTING_CATEGORIES } from "@/lib/paintings/categories";
+import { slugifyTitle } from "@/lib/paintings/slug";
 import { Button } from "@/components/ui/button";
 import type { Painting, PaintingAvailability } from "@/types";
 
-const availabilityOptions: PaintingAvailability[] = [
-  "available",
-  "sold",
-  "reserved",
-];
-
 const labelClass =
-  "block text-xs font-medium tracking-wide text-zinc-600 uppercase";
+  "block text-xs font-medium tracking-wide text-zinc-500 uppercase";
 const inputClass =
   "mt-2 w-full border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900";
+
+const availabilityOptions: PaintingAvailability[] = [
+  "available",
+  "reserved",
+  "sold",
+];
 
 type PaintingFormProps = {
   painting?: Painting;
@@ -25,12 +28,30 @@ type PaintingFormProps = {
 };
 
 export function PaintingForm({ painting, uploadId }: PaintingFormProps) {
-  const [primaryImage, setPrimaryImage] = useState(painting?.image ?? "");
-  const [extraImages, setExtraImages] = useState(
-    (painting?.images ?? []).join("\n")
-  );
+  const [title, setTitle] = useState(painting?.title ?? "");
+  const [slug, setSlug] = useState(painting?.slug ?? "");
+  const [slugTouched, setSlugTouched] = useState(Boolean(painting?.slug));
+  const [coverUrl, setCoverUrl] = useState(painting?.image ?? "");
+  const [gallery, setGallery] = useState<string[]>(() => {
+    if (!painting) {
+      return [];
+    }
+    const extras = painting.images.filter((url) => url !== painting.image);
+    return painting.image ? [painting.image, ...extras] : extras;
+  });
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!slugTouched && title.trim()) {
+      setSlug(slugifyTitle(title));
+    }
+  }, [title, slugTouched]);
+
+  const extraImages = useMemo(
+    () => gallery.filter((url) => url !== coverUrl),
+    [gallery, coverUrl]
+  );
 
   async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const fileList = event.target.files;
@@ -49,6 +70,7 @@ export function PaintingForm({ painting, uploadId }: PaintingFormProps) {
 
     const result = await uploadPaintingImagesAction(formData);
     setUploading(false);
+    event.target.value = "";
 
     if (result.error) {
       setUploadMessage(result.error);
@@ -56,235 +78,279 @@ export function PaintingForm({ painting, uploadId }: PaintingFormProps) {
     }
 
     if (result.urls.length > 0) {
-      if (!primaryImage) {
-        setPrimaryImage(result.urls[0]);
-        const rest = result.urls.slice(1);
-        if (rest.length) {
-          setExtraImages((prev) =>
-            [prev, ...rest].filter(Boolean).join("\n").trim()
-          );
-        }
-      } else {
-        setExtraImages((prev) =>
-          [prev, ...result.urls].filter(Boolean).join("\n").trim()
-        );
+      setGallery((prev) => [...prev, ...result.urls]);
+      if (!coverUrl) {
+        setCoverUrl(result.urls[0]);
       }
       setUploadMessage(`${result.urls.length} image(s) uploaded.`);
     }
   }
 
-  return (
-    <form action={savePaintingAction} className="space-y-8">
-      {painting ? <input type="hidden" name="id" value={painting.id} /> : null}
+  function removeImage(url: string) {
+    setGallery((prev) => prev.filter((item) => item !== url));
+    if (coverUrl === url) {
+      setCoverUrl("");
+    }
+  }
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Field label="Painting title" name="title" defaultValue={painting?.title} required />
-        <Field label="Artist" name="artist" defaultValue={painting?.artist} required />
-        <div>
-          <label className={labelClass} htmlFor="category">
-            Category
-          </label>
-          <select
-            id="category"
-            name="category"
-            defaultValue={painting?.category ?? "Abstract"}
-            className={inputClass}
-          >
-            {PAINTING_CATEGORIES.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+  return (
+    <form action={savePaintingAction} className="space-y-10">
+      {painting ? <input type="hidden" name="id" value={painting.id} /> : null}
+      <input type="hidden" name="image" value={coverUrl} />
+      <input type="hidden" name="images" value={JSON.stringify(extraImages)} />
+
+      <section className="space-y-5">
+        <SectionHeading title="General" />
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Painting title">
+            <input
+              name="title"
+              required
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Slug">
+            <input
+              name="slug"
+              value={slug}
+              onChange={(event) => {
+                setSlugTouched(true);
+                setSlug(event.target.value);
+              }}
+              className={inputClass}
+              placeholder="auto-generated-from-title"
+            />
+          </Field>
+          <Field label="Artist">
+            <input
+              name="artist"
+              required
+              defaultValue={painting?.artist}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Category">
+            <select
+              name="category"
+              defaultValue={painting?.category ?? "Abstract"}
+              className={inputClass}
+            >
+              {PAINTING_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Price">
+            <input
+              name="price"
+              type="number"
+              min={0}
+              step={1}
+              required
+              defaultValue={painting?.price ?? ""}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Currency">
+            <select
+              name="currency"
+              defaultValue={painting?.currency ?? "USD"}
+              className={inputClass}
+            >
+              {STORE_CURRENCIES.map((currency) => (
+                <option key={currency} value={currency}>
+                  {currency}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Year">
+            <input
+              name="year"
+              type="number"
+              min={1900}
+              max={2100}
+              required
+              defaultValue={painting?.year ?? new Date().getFullYear()}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Medium">
+            <input
+              name="medium"
+              required
+              defaultValue={painting?.medium}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Dimensions" className="md:col-span-2">
+            <input
+              name="dimensions"
+              required
+              defaultValue={painting?.dimensions}
+              placeholder={'36" × 48"'}
+              className={inputClass}
+            />
+          </Field>
         </div>
-        <Field
-          label="Price (USD)"
-          name="price"
-          type="number"
-          min={0}
-          step={1}
-          defaultValue={painting?.price ?? ""}
-          required
+      </section>
+
+      <section className="space-y-3">
+        <SectionHeading title="Description" />
+        <textarea
+          name="description"
+          rows={8}
+          defaultValue={painting?.description}
+          className={`${inputClass} min-h-[180px] resize-y leading-relaxed`}
+          placeholder="Write a rich description for collectors — materials, mood, provenance, and display notes."
         />
-        <Field
-          label="Dimensions"
-          name="dimensions"
-          defaultValue={painting?.dimensions}
-          placeholder={'36" × 48"'}
-          required
-        />
-        <Field
-          label="Medium"
-          name="medium"
-          defaultValue={painting?.medium}
-          required
-        />
-        <Field
-          label="Year"
-          name="year"
-          type="number"
-          min={1900}
-          max={2100}
-          defaultValue={painting?.year ?? new Date().getFullYear()}
-          required
-        />
-        <Field
-          label="URL slug (optional)"
-          name="slug"
-          defaultValue={painting?.slug}
-          placeholder="auto-generated-from-title"
-        />
-        <div>
-          <label className={labelClass} htmlFor="availability">
-            Availability
-          </label>
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading title="Images" />
+        <div className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 p-5">
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleUpload}
+            disabled={uploading}
+            className="block w-full text-sm text-zinc-700 file:mr-4 file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:text-white"
+          />
+          {uploadMessage ? (
+            <p className="mt-2 text-sm text-zinc-600">{uploadMessage}</p>
+          ) : null}
+        </div>
+
+        {gallery.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {gallery.map((url) => (
+              <div
+                key={url}
+                className="relative overflow-hidden border border-zinc-200 bg-white"
+              >
+                <div className="relative aspect-[4/3] bg-zinc-100">
+                  <Image src={url} alt="" fill className="object-cover" sizes="240px" />
+                </div>
+                <div className="flex flex-wrap gap-2 p-3">
+                  <button
+                    type="button"
+                    onClick={() => setCoverUrl(url)}
+                    className={`h-9 px-3 text-xs uppercase tracking-wide ${
+                      coverUrl === url
+                        ? "bg-zinc-900 text-white"
+                        : "border border-zinc-300 text-zinc-700"
+                    }`}
+                  >
+                    {coverUrl === url ? "Cover image" : "Set cover"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(url)}
+                    className="inline-flex size-9 items-center justify-center border border-red-200 text-red-700"
+                    aria-label="Remove image"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-zinc-500">
+            Upload one or more images, then choose a cover image for the gallery.
+          </p>
+        )}
+      </section>
+
+      <section className="grid gap-5 md:grid-cols-2">
+        <div className="space-y-3">
+          <SectionHeading title="Status" />
           <select
-            id="availability"
             name="availability"
             defaultValue={painting?.availability ?? "available"}
             className={inputClass}
           >
             {availabilityOptions.map((option) => (
-              <option key={option} value={option}>
+              <option key={option} value={option} className="capitalize">
                 {option}
               </option>
             ))}
           </select>
         </div>
-      </div>
-
-      <div>
-        <label className={labelClass} htmlFor="description">
-          Description
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          rows={5}
-          defaultValue={painting?.description}
-          className={`${inputClass} min-h-[120px] resize-y`}
-          placeholder="Optional custom description for the painting detail page."
-        />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div>
-          <label className={labelClass} htmlFor="image">
-            Primary image URL
-          </label>
-          <input
-            id="image"
-            name="image"
-            value={primaryImage}
-            onChange={(event) => setPrimaryImage(event.target.value)}
-            required
+        <div className="space-y-3">
+          <SectionHeading title="Featured" />
+          <select
+            name="featured"
+            defaultValue={painting?.featured ? "yes" : "no"}
             className={inputClass}
-            placeholder="/uploads/paintings/... or https://..."
-          />
-          {primaryImage ? (
-            <div className="relative mt-3 aspect-[4/3] max-w-xs overflow-hidden bg-zinc-100">
-              <Image
-                src={primaryImage}
-                alt="Primary preview"
-                fill
-                className="object-cover"
-                sizes="320px"
-              />
-            </div>
-          ) : null}
+          >
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
         </div>
+      </section>
 
-        <div>
-          <label className={labelClass} htmlFor="images">
-            Additional image URLs (one per line)
-          </label>
+      <section className="space-y-5">
+        <SectionHeading title="SEO" />
+        <Field label="Meta title">
+          <input
+            name="metaTitle"
+            defaultValue={painting?.metaTitle}
+            placeholder={title ? `${title} | Art Wave` : "Painting title | Art Wave"}
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Meta description">
           <textarea
-            id="images"
-            name="images"
-            rows={6}
-            value={extraImages}
-            onChange={(event) => setExtraImages(event.target.value)}
-            className={`${inputClass} min-h-[140px] resize-y`}
-            placeholder="/uploads/paintings/extra-1.jpg"
+            name="metaDescription"
+            rows={4}
+            defaultValue={painting?.metaDescription}
+            className={`${inputClass} min-h-[100px] resize-y`}
+            placeholder="Short summary for search engines and social previews."
           />
-        </div>
-      </div>
+        </Field>
+      </section>
 
-      <div className="border border-dashed border-zinc-300 bg-zinc-50 p-5">
-        <p className="text-sm font-medium text-zinc-900">Upload images</p>
-        <p className="mt-1 text-sm text-zinc-600">
-          Files are saved under <code className="text-xs">public/uploads/paintings/</code> for local development.
-        </p>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleUpload}
-          disabled={uploading}
-          className="mt-4 block w-full text-sm text-zinc-700 file:mr-4 file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:text-white"
-        />
-        {uploadMessage ? (
-          <p className="mt-2 text-sm text-zinc-600">{uploadMessage}</p>
-        ) : null}
-      </div>
-
-      <label className="inline-flex items-center gap-2 text-sm text-zinc-800">
-        <input
-          type="checkbox"
-          name="featured"
-          defaultChecked={painting?.featured}
-          className="size-4 border-zinc-400"
-        />
-        Feature on homepage
-      </label>
-
-      <div className="flex flex-wrap gap-3 border-t border-zinc-200 pt-6">
-        <Button type="submit" className="h-11 rounded-none bg-zinc-900 px-6 text-white">
+      <div className="border-t border-zinc-200 pt-6">
+        <Button
+          type="submit"
+          disabled={!coverUrl}
+          className="h-11 rounded-none bg-zinc-900 px-8 text-white disabled:opacity-50"
+        >
           {painting ? "Save changes" : "Create painting"}
         </Button>
+        {!coverUrl ? (
+          <p className="mt-2 text-sm text-amber-700">
+            Add at least one image and set a cover before saving.
+          </p>
+        ) : null}
       </div>
     </form>
   );
 }
 
+function SectionHeading({ title }: { title: string }) {
+  return <h2 className="font-heading text-xl text-zinc-900">{title}</h2>;
+}
+
 function Field({
   label,
-  name,
-  defaultValue,
-  required,
-  type = "text",
-  placeholder,
-  min,
-  max,
-  step,
+  children,
+  className,
 }: {
   label: string;
-  name: string;
-  defaultValue?: string | number;
-  required?: boolean;
-  type?: string;
-  placeholder?: string;
-  min?: number;
-  max?: number;
-  step?: number;
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div>
-      <label className={labelClass} htmlFor={name}>
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        defaultValue={defaultValue}
-        required={required}
-        placeholder={placeholder}
-        min={min}
-        max={max}
-        step={step}
-        className={inputClass}
-      />
+    <div className={className}>
+      <label className={labelClass}>{label}</label>
+      {children}
     </div>
   );
 }

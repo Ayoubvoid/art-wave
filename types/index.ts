@@ -54,6 +54,7 @@ export type Painting = {
   artist: string;
   category: PaintingCategory;
   price: number;
+  currency: string;
   dimensions: string;
   medium: string;
   year: number;
@@ -62,6 +63,8 @@ export type Painting = {
   image: string;
   description: string;
   images: string[];
+  metaTitle: string;
+  metaDescription: string;
   updatedAt: string;
 };
 
